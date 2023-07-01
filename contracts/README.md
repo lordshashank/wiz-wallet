@@ -1,4 +1,4 @@
-# Mina zkApp: Mina Hackathon
+# Mina zkApp: 08 Custom Tokens
 
 This template uses TypeScript.
 

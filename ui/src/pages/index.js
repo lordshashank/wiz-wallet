@@ -1,30 +1,35 @@
-
-import Head from 'next/head';
-import Image from 'next/image';
-import { useEffect } from 'react';
-import GradientBG from '../components/GradientBG.js';
-import styles from '../styles/Home.module.css';
+import Head from "next/head";
+import Image from "next/image";
+import { useEffect } from "react";
+import GradientBG from "../components/GradientBG.js";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
+  let zkApp;
   useEffect(() => {
     (async () => {
-      const { Mina, PublicKey } = await import('snarkyjs');
-      const { Add } = await import('../../../contracts/build/src/');
+      const { Mina, PublicKey } = await import("snarkyjs");
+      const { Add } = await import("../../../contracts/build/src/");
 
       // Update this to use the address (public key) for your zkApp account.
       // To try it out, you can try this address for an example "Add" smart contract that we've deployed to
       // Berkeley Testnet B62qkwohsqTBPsvhYE8cPZSpzJMgoKn4i1LQRuBAtVXWpaT4dgH6WoA.
-      const zkAppAddress = '';
+      const zkAppAddress =
+        "B62qk4onxhfZsmdy8wk1Yh3vo2YsaG1V4qsoPZJQSBbKGmViDU9uo6H";
       // This should be removed once the zkAppAddress is updated.
-      if (!zkAppAddress) {
-        console.error(
-          'The following error is caused because the zkAppAddress has an empty string as the public key. Update the zkAppAddress with the public key for your zkApp account, or try this address for an example "Add" smart contract that we deployed to Berkeley Testnet: B62qkwohsqTBPsvhYE8cPZSpzJMgoKn4i1LQRuBAtVXWpaT4dgH6WoA'
-        );
-      }
-      //const zkApp = new Add(PublicKey.fromBase58(zkAppAddress))
+      // if (!zkAppAddress) {
+      //   console.error(
+      //     'The following error is caused because the zkAppAddress has an empty string as the public key. Update the zkAppAddress with the public key for your zkApp account, or try this address for an example "Add" smart contract that we deployed to Berkeley Testnet: B62qkwohsqTBPsvhYE8cPZSpzJMgoKn4i1LQRuBAtVXWpaT4dgH6WoA'
+      //   );
+      // }
+      zkApp = new Add(PublicKey.fromBase58(zkAppAddress));
+      console.log(typeof zkApp);
+      console.log("zkApp", zkApp);
+      console.log("zkApp", zkApp.address);
+      console.log("zkApp", zkApp["get reducer"]);
     })();
   }, []);
-
+  // console.log("zkApp", zkApp);
   return (
     <>
       <Head>
