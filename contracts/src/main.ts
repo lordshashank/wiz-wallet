@@ -7,6 +7,8 @@ import {
   AccountUpdate,
   UInt64,
   Signature,
+  MerkleMap,
+  Field,
 } from 'snarkyjs';
 
 await isReady;
@@ -21,7 +23,7 @@ const deployerAccount = Local.testAccounts[0].privateKey;
 
 const zkAppPrivateKey = PrivateKey.random();
 const zkAppAddress = zkAppPrivateKey.toPublicKey();
-
+console.log(zk);
 console.log('compiling...');
 
 let { verificationKey } = await BasicTokenContract.compile();
@@ -78,7 +80,7 @@ console.log('minted');
 console.log(
   contract.totalAmountInCirculation.get() +
     ' ' +
-    Mina.getAccount(zkAppAddress).tokenSymbol
+    Mina.getAccount(zkAppAddress)?.tokenSymbol
 );
 
 // ----------------------------------------------------
@@ -86,10 +88,21 @@ console.log(
 console.log('sending...');
 
 const sendAmount = UInt64.from(3);
+const map = new MerkleMap();
 
+const rootBefore = map.getRoot();
+
+const key = Field(100);
+const valueBefore = map.get(key);
+const witness = map.getWitness(key);
 const send_txn = await Mina.transaction(deployerAccount.toPublicKey(), () => {
   AccountUpdate.fundNewAccount(deployerAccount.toPublicKey());
-  contract.sendTokens(zkAppAddress, deployerAccount.toPublicKey(), sendAmount);
+  contract.sendTokens(
+    witness,
+    deployerAccount.toPublicKey(),
+    sendAmount,
+    valueBefore
+  );
 });
 await send_txn.prove();
 await send_txn.sign([deployerAccount]).send();

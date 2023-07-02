@@ -8,6 +8,6 @@ coverage
 
 # System
 .DS_Store
-
+.husky
 # Never commit keys to Git!
 keys

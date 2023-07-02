@@ -11,10 +11,85 @@ import {
   Field,
   MerkleMapWitness,
   MerkleMap,
+  AddressMerkleMap,
+  Bool,
+  MerkleTree,
 } from 'snarkyjs';
 
-const tokenSymbol = 'WIZWALLET';
+const tokenSymbol = 'WIZ';
+import {
+  OffChainStorage,
+  Update,
+  MerkleWitness8,
+} from 'experimental-zkapp-offchain-storage';
 
+export class NumberTreeContract extends SmartContract {
+  @state(PublicKey) storageServerPublicKey = State<PublicKey>();
+  @state(Field) storageNumber = State<Field>();
+  @state(Field) storageTreeRoot = State<Field>();
+
+  deploy(args: DeployArgs) {
+    super.deploy(args);
+    this.setPermissions({
+      ...Permissions.default(),
+      editState: Permissions.proofOrSignature(),
+    });
+  }
+
+  @method initState(storageServerPublicKey: PublicKey) {
+    this.storageServerPublicKey.set(storageServerPublicKey);
+    this.storageNumber.set(Field.zero);
+
+    const emptyTreeRoot = new MerkleTree(8).getRoot();
+    this.storageTreeRoot.set(emptyTreeRoot);
+  }
+
+  @method update(
+    leafIsEmpty: Bool,
+    oldNum: Field,
+    num: Field,
+    path: MerkleWitness8,
+    storedNewRootNumber: Field,
+    storedNewRootSignature: Signature
+  ) {
+    const storedRoot = this.storageTreeRoot.get();
+    this.storageTreeRoot.assertEquals(storedRoot);
+
+    let storedNumber = this.storageNumber.get();
+    this.storageNumber.assertEquals(storedNumber);
+
+    let storageServerPublicKey = this.storageServerPublicKey.get();
+    this.storageServerPublicKey.assertEquals(storageServerPublicKey);
+
+    let leaf = [oldNum];
+    let newLeaf = [num];
+
+    // newLeaf can be a function of the existing leaf
+    newLeaf[0].assertGt(leaf[0]);
+
+    const updates = [
+      {
+        leaf,
+        leafIsEmpty,
+        newLeaf,
+        newLeafIsEmpty: Bool(false),
+        leafWitness: path,
+      },
+    ];
+
+    const storedNewRoot = OffChainStorage.assertRootUpdateValid(
+      storageServerPublicKey,
+      storedNumber,
+      storedRoot,
+      updates,
+      storedNewRootNumber,
+      storedNewRootSignature
+    );
+
+    this.storageTreeRoot.set(storedNewRoot);
+    this.storageNumber.set(storedNewRootNumber);
+  }
+}
 export class BasicTokenContract extends SmartContract {
   @state(UInt64) totalAmountInCirculation = State<UInt64>();
   @state(Field) mapRoot = State<Field>();
@@ -57,41 +132,46 @@ export class BasicTokenContract extends SmartContract {
       .assertTrue();
 
     this.token.mint({
-      address: receiverAddress,
+      address: this.address,
       amount,
     });
+    // setting the address mapping to the token amount
+    const map = new MerkleMap();
+    map.set(Field(1), Field(amount.toString()));
+    this.mapRoot.set(map.getRoot());
 
     this.totalAmountInCirculation.set(newTotalAmountInCirculation);
   }
 
   @method sendTokens(
-    senderAddress: PublicKey,
+    keyWitness: MerkleMapWitness,
     receiverAddress: PublicKey,
-    amount: UInt64
+    amount: UInt64,
+    valueBefore: Field
   ) {
+    // compute the root after incrementing
+    const [rootAfter, _] = keyWitness.computeRootAndKey(
+      valueBefore.sub(Field(amount.toString()))
+    );
+
+    // set the new root
+    this.mapRoot.set(rootAfter);
+    //send the tokens
     this.token.send({
-      from: senderAddress,
+      from: this.address,
       to: receiverAddress,
       amount,
     });
   }
 
-  // @method setValue(key: Field, value: Field) {
-  //   const map = new MerkleMap(32, 32);
-  //   map.set(key.toBuffer(), value.toBuffer());
-  //   this.mapRoot.set(map.root.toBuffer());
-  // }
-
   @method update(
     keyWitness: MerkleMapWitness,
     keyToChange: Field,
     valueBefore: Field,
-    incrementAmount: Field
+    valueAfter: Field
   ) {
     const initialRoot = this.mapRoot.get();
     this.mapRoot.assertEquals(initialRoot);
-
-    incrementAmount.assertLt(Field(10));
 
     // check the initial state matches what we expect
     const [rootBefore, key] = keyWitness.computeRootAndKey(valueBefore);
@@ -100,11 +180,26 @@ export class BasicTokenContract extends SmartContract {
     key.assertEquals(keyToChange);
 
     // compute the root after incrementing
-    const [rootAfter, _] = keyWitness.computeRootAndKey(
-      valueBefore.add(incrementAmount)
-    );
+    const [rootAfter, _] = keyWitness.computeRootAndKey(valueAfter);
 
     // set the new root
     this.mapRoot.set(rootAfter);
+  }
+  @method withdraw(
+    keyWitness: MerkleMapWitness,
+    receiverAddress: PublicKey,
+    amount: UInt64
+  ) {
+    // compute the root after incrementing
+    const [rootAfter, _] = keyWitness.computeRootAndKey(Field(0));
+
+    // set the new root
+    this.mapRoot.set(rootAfter);
+    //send the tokens
+    this.token.send({
+      from: this.address,
+      to: receiverAddress,
+      amount,
+    });
   }
 }
