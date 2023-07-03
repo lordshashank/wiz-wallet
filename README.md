@@ -29,23 +29,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
+  <a href="https://github.com/lordshashank/wiz-wallet">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">Wiz-Wallet</h3>
 
   <p align="center">
-    project_description
+    Easing mina transactions
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/lordshashank/wiz-wallet"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://github.com/lordshashank/wiz-wallet">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/lordshashank/wiz-wallet/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/lordshashank/wiz-wallet/issues">Request Feature</a>
   </p>
 </div>
 
@@ -81,7 +81,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+Wiz-Wallet is a type of smart contract wallet that minimses the on-chain transactions by using off-chain storage and on-chain verification. It is a type of wallet that is used to store the crypto assets and can be used to send and receive the crypto assets. Currently its implemented for custom tokens where users token are locked in the smart contract and can be used to send and receive the tokens. The wallet is implemented using the concept of merkle maps where the users can send and receive the tokens without any on-chain transactions. The transactions are only done when the user wants to withdraw the tokens from the wallet.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -89,12 +89,9 @@ Here's a blank template to get started: To avoid retyping too much info. Do a se
 
 - [![Next][next.js]][next-url]
 - [![React][react.js]][react-url]
-- [![Vue][vue.js]][vue-url]
-- [![Angular][angular.io]][angular-url]
-- [![Svelte][svelte.dev]][svelte-url]
-- [![Laravel][laravel.com]][laravel-url]
-- [![Bootstrap][bootstrap.com]][bootstrap-url]
-- [![JQuery][jquery.com]][jquery-url]
+- [Mina]
+- [snarkyjs]
+- [aurora]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -113,22 +110,31 @@ This is an example of how to list things you need to use the software and how to
   ```sh
   npm install npm@latest -g
   ```
+- Install the zk cli following the instructions from [here](https://docs.minaprotocol.com/zkapps/tutorials)
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/lordshashank/wiz-wallet.git
+   ```
+2. Go to the contracts folder
+   ```sh
+   cd contracts
    ```
 3. Install NPM packages
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = "ENTER YOUR API";
+4. Run the build command to build js files from the snarky files
+   ```sh
+   npm run build
    ```
+5. Run various scripts to deploy and interact with the smart contract
+   ```sh
+   node build/src/main
+   ```
+   similarly frontend could also be run to test it.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -136,22 +142,10 @@ This is an example of how to list things you need to use the software and how to
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+This dapp can be used to make daily transactions on any custom tokens on the mina blockchain. It ensures less on-chain interactions for every small transaction and hence reduces the gas fees. The transactions are only done when the user wants to withdraw the tokens from the wallet.
+We look forward to implement this for the mainnet and also for the native tokens along with features that could be quite useful for the users.
 
 _For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- ROADMAP -->
-
-## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-  - [ ] Nested Feature
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -184,9 +178,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Your Name - [@0xlord_forever](https://twitter.com/0xlord_forever) - email@email_client.com
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/lordshashank/wiz-wallet](https://github.com/lordshashank/wiz-wallet)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -203,16 +197,16 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/github_username/repo_name/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/lordshashank/wiz-wallet.svg?style=for-the-badge
+[contributors-url]: https://github.com/lordshashank/wiz-wallet/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/lordshashank/wiz-wallet.svg?style=for-the-badge
+[forks-url]: https://github.com/lordshashank/wiz-wallet/network/members
+[stars-shield]: https://img.shields.io/github/stars/lordshashank/wiz-wallet.svg?style=for-the-badge
+[stars-url]: https://github.com/lordshashank/wiz-wallet/stargazers
+[issues-shield]: https://img.shields.io/github/issues/lordshashank/wiz-wallet.svg?style=for-the-badge
+[issues-url]: https://github.com/lordshashank/wiz-wallet/issues
+[license-shield]: https://img.shields.io/github/license/lordshashank/wiz-wallet.svg?style=for-the-badge
+[license-url]: https://github.com/lordshashank/wiz-wallet/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
@@ -232,3 +226,6 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [bootstrap-url]: https://getbootstrap.com
 [jquery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [jquery-url]: https://jquery.com
+[Mina]: https://minaprotocol.com/
+[snarkyjs]: https://www.npmjs.com/package/snarkyjs
+[aurora]: https://www.aurowallet.com/
