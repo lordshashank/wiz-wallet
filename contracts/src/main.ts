@@ -23,7 +23,6 @@ const deployerAccount = Local.testAccounts[0].privateKey;
 
 const zkAppPrivateKey = PrivateKey.random();
 const zkAppAddress = zkAppPrivateKey.toPublicKey();
-console.log(zk);
 console.log('compiling...');
 
 let { verificationKey } = await BasicTokenContract.compile();

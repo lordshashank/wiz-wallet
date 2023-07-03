@@ -1,4 +1,21 @@
 {
   "version": 1,
-  "networks": {}
+  "deployAliases": {
+    "wiz": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/wiz.json",
+      "feepayerKeyPath": "/home/lordforever/.cache/zkapp-cli/keys/main.json",
+      "feepayerAlias": "main",
+      "fee": "0.1",
+      "smartContract": "BasicTokenContract"
+    },
+    "wallet": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/wallet.json",
+      "feepayerKeyPath": "/home/lordforever/.cache/zkapp-cli/keys/wiz.json",
+      "feepayerAlias": "wiz",
+      "fee": "0.1",
+      "smartContract": "BasicTokenContract"
+    }
+  }
 }

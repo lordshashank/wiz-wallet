@@ -137,7 +137,9 @@ export class BasicTokenContract extends SmartContract {
     });
     // setting the address mapping to the token amount
     const map = new MerkleMap();
-    map.set(Field(1), Field(amount.toString()));
+    // const stringAmount: string = amount.toString();
+    const stringAmount: string = '10';
+    map.set(Field(1), Field(stringAmount));
     this.mapRoot.set(map.getRoot());
 
     this.totalAmountInCirculation.set(newTotalAmountInCirculation);
@@ -151,7 +153,7 @@ export class BasicTokenContract extends SmartContract {
   ) {
     // compute the root after incrementing
     const [rootAfter, _] = keyWitness.computeRootAndKey(
-      valueBefore.sub(Field(amount.toString()))
+      valueBefore.sub(Field(10))
     );
 
     // set the new root
