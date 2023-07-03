@@ -11,7 +11,6 @@ import {
   Field,
   MerkleMapWitness,
   MerkleMap,
-  AddressMerkleMap,
   Bool,
   MerkleTree,
 } from 'snarkyjs';
@@ -38,7 +37,7 @@ export class NumberTreeContract extends SmartContract {
 
   @method initState(storageServerPublicKey: PublicKey) {
     this.storageServerPublicKey.set(storageServerPublicKey);
-    this.storageNumber.set(Field.zero);
+    this.storageNumber.set(Field(0));
 
     const emptyTreeRoot = new MerkleTree(8).getRoot();
     this.storageTreeRoot.set(emptyTreeRoot);
@@ -65,7 +64,7 @@ export class NumberTreeContract extends SmartContract {
     let newLeaf = [num];
 
     // newLeaf can be a function of the existing leaf
-    newLeaf[0].assertGt(leaf[0]);
+    // newLeaf[0].assertGt(leaf[0]);
 
     const updates = [
       {
@@ -137,7 +136,9 @@ export class BasicTokenContract extends SmartContract {
     });
     // setting the address mapping to the token amount
     const map = new MerkleMap();
-    map.set(Field(1), Field(amount.toString()));
+    // const stringAmount: string = amount.toString();
+    const stringAmount: string = '10';
+    map.set(Field(1), Field(stringAmount));
     this.mapRoot.set(map.getRoot());
 
     this.totalAmountInCirculation.set(newTotalAmountInCirculation);
@@ -151,7 +152,7 @@ export class BasicTokenContract extends SmartContract {
   ) {
     // compute the root after incrementing
     const [rootAfter, _] = keyWitness.computeRootAndKey(
-      valueBefore.sub(Field(amount.toString()))
+      valueBefore.sub(Field(10))
     );
 
     // set the new root

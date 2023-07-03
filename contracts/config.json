@@ -1,4 +1,13 @@
 {
   "version": 1,
-  "networks": {}
+  "deployAliases": {
+    "wiz-wallet": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/wiz-wallet.json",
+      "feepayerKeyPath": "/Users/Loser/Hackathons/Mina/zkapp-cli/keys/03-deploy.json",
+      "feepayerAlias": "03-deploy",
+      "fee": "0.1",
+      "smartContract": "BasicTokenContract"
+    }
+  }
 }
