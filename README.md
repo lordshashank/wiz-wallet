@@ -24,13 +24,12 @@
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/lordshashank/wiz-wallet">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.jpg" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Wiz-Wallet</h3>
@@ -67,7 +66,6 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -78,8 +76,6 @@
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 Wiz-Wallet is a type of smart contract wallet that minimses the on-chain transactions by using off-chain storage and on-chain verification. It is a type of wallet that is used to store the crypto assets and can be used to send and receive the crypto assets. Currently its implemented for custom tokens where users token are locked in the smart contract and can be used to send and receive the tokens. The wallet is implemented using the concept of merkle maps where the users can send and receive the tokens without any on-chain transactions. The transactions are only done when the user wants to withdraw the tokens from the wallet.
 
@@ -92,6 +88,22 @@ Wiz-Wallet is a type of smart contract wallet that minimses the on-chain transac
 - [Mina]
 - [snarkyjs]
 - [aurora]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## How it works
+
+[![Product Name Screen Shot][product-screenshot]](https://example.com)
+
+All the code for smart contract can be seen [here](https://github.com/lordshashank/wiz-wallet/blob/main/contracts/src/WizWallet.ts).
+So as of now there are basic functions for usage-
+
+1. Mint- To mint the tokens the custom tokens of specified value. The tokens are minted to the smart contract and the user is assigned its value using merkle maps.
+2. Transfer- To transfer the tokens from one user to another. The tokens are transferred from one user to another by updating merkle map off-chain
+3. Withdraw- To withdraw the tokens from the smart contract. The tokens are withdrawn from the smart contract by updating the merkle map off-chain and then the proof is generated and verified on-chain.
+4. Update- To update the merkle map of the user. The merkle map is updated off-chain and then the proof is generated and verified on-chain.
+
+These are the basic functionalities that we were able to implement during the hackathon. Being new to snarkyjs we had to work quite a lot to understand the concepts and implement them. We were able to implement the basic functionalities and we are looking forward to implement more functionalities in the future and implement off-chain and on-chain features for native tokens, storages, etc.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -130,7 +142,11 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    npm run build
    ```
-5. Run various scripts to deploy and interact with the smart contract
+5. Run the local off-chain server
+   ```sh
+   node node_modules/experimental-zkapp-offchain-storage/build/src/storageServer.js
+   ```
+6. Run various scripts to deploy and interact with the smart contract
    ```sh
    node build/src/main
    ```
@@ -178,7 +194,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Your Name - [@0xlord_forever](https://twitter.com/0xlord_forever) - email@email_client.com
+Your Name - [@0xlord_forever](https://twitter.com/0xlord_forever) - shashanktrivedi1917@gmail.com
 
 Project Link: [https://github.com/lordshashank/wiz-wallet](https://github.com/lordshashank/wiz-wallet)
 
@@ -188,9 +204,8 @@ Project Link: [https://github.com/lordshashank/wiz-wallet](https://github.com/lo
 
 ## Acknowledgments
 
-- []()
-- []()
-- []()
+- [Mina](https://minaprotocol.com/) for the amazing hackathon.
+- Also, thanks to the mina discord community for helping us out during the hackathon.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

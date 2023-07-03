@@ -1,4 +1,4 @@
-import { BasicTokenContract } from './BasicTokenContract.js';
+import { WizWallet } from './WizWallet.js';
 import {
   isReady,
   shutdown,
@@ -46,15 +46,15 @@ const serverPublicKey = await OffChainStorage.getPublicKey(
 console.log('compiling...');
 
 // let { verificationKey } =
-await BasicTokenContract.compile();
+await WizWallet.compile();
 
 console.log('compiled');
 
 // ----------------------------------------------------
-const contract = new BasicTokenContract(zkAppAddress);
+const contract = new WizWallet(zkAppAddress);
 
 // console.log('deploying...');
-// const contract = new BasicTokenContract(zkAppAddress);
+// const contract = new WizWallet(zkAppAddress);
 // const deploy_txn = await Mina.transaction(deployerAccount.toPublicKey(), () => {
 //   AccountUpdate.fundNewAccount(deployerAccount.toPublicKey());
 //   contract.deploy({ verificationKey, zkappKey: zkAppPrivateKey });

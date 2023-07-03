@@ -22,7 +22,7 @@ import {
   MerkleWitness8,
 } from 'experimental-zkapp-offchain-storage';
 
-export class BasicTokenContract extends SmartContract {
+export class WizWallet extends SmartContract {
   @state(UInt64) totalAmountInCirculation = State<UInt64>();
   @state(Field) mapRoot = State<Field>();
   @state(PublicKey) storageServerPublicKey = State<PublicKey>();

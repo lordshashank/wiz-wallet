@@ -1,3 +1,3 @@
-import { BasicTokenContract } from './BasicTokenContract.js';
+import { WizWallet } from './WizWallet.js';
 
-export { BasicTokenContract };
+export { WizWallet };
