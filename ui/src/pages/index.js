@@ -1,152 +1,250 @@
-import Head from "next/head";
-import Image from "next/image";
-import { useEffect } from "react";
-import GradientBG from "../components/GradientBG.js";
-import styles from "../styles/Home.module.css";
+import { useEffect, useState } from "react";
+import "./reactCOIServiceWorker";
+import ZkappWorkerClient from "./zkappWorkerClient";
+import { PublicKey, Field, Signature } from "snarkyjs";
+let transactionFee = 0.1;
 
-export default function Home() {
-  let zkApp;
+export default function App() {
+  const [state, setState] = useState({
+    zkappWorkerClient: null,
+    hasWallet: null,
+    hasBeenSetup: false,
+    accountExists: true,
+    currentNum: null,
+    publicKey: null,
+    zkappPublicKey: null,
+    creatingTransaction: false,
+  });
+  // -------------------------------------------------------
+
+  // -------------------------------------------------------
+  // Do Setup
   useEffect(() => {
     (async () => {
-      const { Mina, PublicKey } = await import("snarkyjs");
-      const { Add } = await import("../../../contracts/build/src/");
+      if (!state.hasBeenSetup) {
+        const zkappWorkerClient = new ZkappWorkerClient();
+        console.log("Loading SnarkyJS...");
+        // await zkappWorkerClient.loadSnarkyJS();
+        console.log("done");
+        await zkappWorkerClient.setActiveInstanceToBerkeley();
 
-      // Update this to use the address (public key) for your zkApp account.
-      // To try it out, you can try this address for an example "Add" smart contract that we've deployed to
-      // Berkeley Testnet B62qkwohsqTBPsvhYE8cPZSpzJMgoKn4i1LQRuBAtVXWpaT4dgH6WoA.
-      const zkAppAddress =
-        "B62qk4onxhfZsmdy8wk1Yh3vo2YsaG1V4qsoPZJQSBbKGmViDU9uo6H";
-      // This should be removed once the zkAppAddress is updated.
-      // if (!zkAppAddress) {
-      //   console.error(
-      //     'The following error is caused because the zkAppAddress has an empty string as the public key. Update the zkAppAddress with the public key for your zkApp account, or try this address for an example "Add" smart contract that we deployed to Berkeley Testnet: B62qkwohsqTBPsvhYE8cPZSpzJMgoKn4i1LQRuBAtVXWpaT4dgH6WoA'
-      //   );
-      // }
-      zkApp = new Add(PublicKey.fromBase58(zkAppAddress));
-      console.log(typeof zkApp);
-      console.log("zkApp", zkApp);
-      console.log("zkApp", zkApp.address);
-      console.log("zkApp", zkApp["get reducer"]);
+        const mina = window.mina;
+        if (mina == null) {
+          setState({ ...state, hasWallet: false });
+          return;
+        }
+        const publicKeyBase58 = (await mina.requestAccounts())[0];
+        const publicKey = PublicKey.fromBase58(publicKeyBase58);
+        console.log("using key", publicKey.toBase58());
+        console.log("checking if account exists...");
+        const res = await zkappWorkerClient.fetchAccount({
+          publicKey,
+        });
+        console.log(res);
+        // const accountExists = res.error == null;
+
+        await zkappWorkerClient.loadContract();
+        console.log("compiling zkApp");
+        await zkappWorkerClient.compileContract();
+        console.log("zkApp compiled");
+        const zkappPublicKey = PublicKey.fromBase58(
+          "B62qkwohsqTBPsvhYE8cPZSpzJMgoKn4i1LQRuBAtVXWpaT4dgH6WoA"
+        );
+        await zkappWorkerClient.initZkappInstance(zkappPublicKey);
+        console.log("getting zkApp state...");
+        await zkappWorkerClient.fetchAccount({ publicKey: zkappPublicKey });
+        // const currentNum = await zkappWorkerClient.getNum();
+
+        // console.log("current state:", currentNum.toString());
+        setState({
+          ...state,
+          zkappWorkerClient,
+          hasWallet: true,
+          hasBeenSetup: true,
+          publicKey,
+          zkappPublicKey,
+          accountExists: true,
+        });
+      }
     })();
   }, []);
-  // console.log("zkApp", zkApp);
+  // -------------------------------------------------------
+
+  // -------------------------------------------------------
+  // Create UI elements
+
+  let hasWallet;
+  if (state.hasWallet != null && !state.hasWallet) {
+    const auroLink = "https://www.aurowallet.com/";
+    const auroLinkElem = (
+      <a href={auroLink} target="_blank" rel="noreferrer">
+        {" "}
+        [Link]{" "}
+      </a>
+    );
+    hasWallet = (
+      <div>
+        {" "}
+        Could not find a wallet. Install Auro wallet here: {auroLinkElem}
+      </div>
+    );
+  }
+
+  let setupText = state.hasBeenSetup
+    ? "SnarkyJS Ready"
+    : "Setting up SnarkyJS...";
+  let setup = (
+    <div>
+      {" "}
+      {setupText} {hasWallet}
+    </div>
+  );
+
+  let accountDoesNotExist;
+  if (state.hasBeenSetup && !state.accountExists) {
+    const faucetLink =
+      "https://faucet.minaprotocol.com/?address=" + state.publicKey?.toBase58();
+    accountDoesNotExist = (
+      <div>
+        Account does not exist. Please visit the faucet to fund this account
+        <a href={faucetLink} target="_blank" rel="noreferrer">
+          {" "}
+          [Link]{" "}
+        </a>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------
+  // Mint
+  const mint = async () => {
+    setState({ ...state, creatingTransaction: true });
+    console.log("sending a transaction...");
+    await state.zkappWorkerClient.fetchAccount({
+      publicKey: state.publicKey,
+    });
+    await state.zkappWorkerClient.mint();
+    console.log("creating proof...");
+    await state.zkappWorkerClient.proveMintTransaction();
+    console.log("getting Transaction JSON...");
+    const transactionJSON = await state.zkappWorkerClient.getTransactionJSON();
+    console.log("requesting send transaction...");
+    const { hash } = await window.mina.sendTransaction({
+      transaction: transactionJSON,
+      feePayer: {
+        fee: transactionFee,
+        memo: "",
+      },
+    });
+    console.log(
+      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
+    );
+    setState({ ...state, creatingTransaction: false });
+  };
+  // -------------------------------------------------------
+
+  // -------------------------------------------------------
+  // Withdraw
+  const withdraw = async () => {
+    setState({ ...state, creatingTransaction: true });
+    console.log("sending a transaction...");
+    await state.zkappWorkerClient.fetchAccount({
+      publicKey: state.publicKey,
+    });
+    await state.zkappWorkerClient.withdraw();
+    console.log("creating proof...");
+    await state.zkappWorkerClient.proveWithdrawTransaction();
+    console.log("getting Transaction JSON...");
+    const transactionJSON = await state.zkappWorkerClient.getTransactionJSON();
+    console.log("requesting send transaction...");
+    const { hash } = await window.mina.sendTransaction({
+      transaction: transactionJSON,
+      feePayer: {
+        fee: transactionFee,
+        memo: "",
+      },
+    });
+    console.log(
+      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
+    );
+    setState({ ...state, creatingTransaction: false });
+  };
+
+  // -------------------------------------------------------
+  // -------------------------------------------------------
+  // send tokens
+  const sendTokens = async () => {
+    setState({ ...state, creatingTransaction: true });
+    console.log("sending a transaction...");
+    await state.zkappWorkerClient.fetchAccount({
+      publicKey: state.publicKey,
+    });
+    await state.zkappWorkerClient.sendTokens();
+    console.log("creating proof...");
+    await state.zkappWorkerClient.proveSendTokensTransaction();
+    console.log("getting Transaction JSON...");
+    const transactionJSON = await state.zkappWorkerClient.getTransactionJSON();
+    console.log("requesting send transaction...");
+    const { hash } = await window.mina.sendTransaction({
+      transaction: transactionJSON,
+      feePayer: {
+        fee: transactionFee,
+        memo: "",
+      },
+    });
+    console.log(
+      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
+    );
+    setState({ ...state, creatingTransaction: false });
+  };
+
+  // -------------------------------------------------------
+  // -------------------------------------------------------
+  // update
+  const sendUpdateTransaction = async () => {
+    setState({ ...state, creatingTransaction: true });
+    console.log("sending a transaction...");
+    await state.zkappWorkerClient.fetchAccount({
+      publicKey: state.publicKey,
+    });
+    await state.zkappWorkerClient.createUpdateTransaction();
+    console.log("creating proof...");
+    await state.zkappWorkerClient.proveUpdateTransaction();
+    console.log("getting Transaction JSON...");
+    const transactionJSON = await state.zkappWorkerClient.getTransactionJSON();
+    console.log("requesting send transaction...");
+    const { hash } = await window.mina.sendTransaction({
+      transaction: transactionJSON,
+      feePayer: {
+        fee: transactionFee,
+        memo: "",
+      },
+    });
+    console.log(
+      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
+    );
+    setState({ ...state, creatingTransaction: false });
+  };
+
+  // -------------------------------------------------------
+
+  let mainContent;
+  if (state.hasBeenSetup && state.accountExists) {
+    mainContent = (
+      <div>
+        <button onClick={mint}>Mint</button>
+        <button>Withdraw</button>
+        <button>Send Tokens</button>
+        <button>Update</button>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Head>
-        <title>Mina zkApp UI</title>
-        <meta name="description" content="built with SnarkyJS" />
-        <link rel="icon" href="/assets/favicon.ico" />
-      </Head>
-      <GradientBG>
-        <main className={styles.main}>
-          <div className={styles.center}>
-            <a
-              href="https://minaprotocol.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                className={styles.logo}
-                src="/assets/HeroMinaLogo.svg"
-                alt="Mina Logo"
-                width="191"
-                height="174"
-                priority
-              />
-            </a>
-            <p className={styles.tagline}>
-              built with
-              <code className={styles.code}> SnarkyJS</code>
-            </p>
-          </div>
-          <p className={styles.start}>
-            Get started by editing
-            <code className={styles.code}> src/pages/index.tsx</code>
-          </p>
-          <div className={styles.grid}>
-            <a
-              href="https://docs.minaprotocol.com/zkapps"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2>
-                <span>DOCS</span>
-                <div>
-                  <Image
-                    src="/assets/arrow-right-small.svg"
-                    alt="Mina Logo"
-                    width={16}
-                    height={16}
-                    priority
-                  />
-                </div>
-              </h2>
-              <p>Explore zkApps, how to build one, and in-depth references</p>
-            </a>
-            <a
-              href="https://docs.minaprotocol.com/zkapps/tutorials/hello-world"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2>
-                <span>TUTORIALS</span>
-                <div>
-                  <Image
-                    src="/assets/arrow-right-small.svg"
-                    alt="Mina Logo"
-                    width={16}
-                    height={16}
-                    priority
-                  />
-                </div>
-              </h2>
-              <p>Learn with step-by-step SnarkyJS tutorials</p>
-            </a>
-            <a
-              href="https://discord.gg/minaprotocol"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2>
-                <span>QUESTIONS</span>
-                <div>
-                  <Image
-                    src="/assets/arrow-right-small.svg"
-                    alt="Mina Logo"
-                    width={16}
-                    height={16}
-                    priority
-                  />
-                </div>
-              </h2>
-              <p>Ask questions on our Discord server</p>
-            </a>
-            <a
-              href="https://docs.minaprotocol.com/zkapps/how-to-deploy-a-zkapp"
-              className={styles.card}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <h2>
-                <span>DEPLOY</span>
-                <div>
-                  <Image
-                    src="/assets/arrow-right-small.svg"
-                    alt="Mina Logo"
-                    width={16}
-                    height={16}
-                    priority
-                  />
-                </div>
-              </h2>
-              <p>Deploy a zkApp to Berkeley Testnet</p>
-            </a>
-          </div>
-        </main>
-      </GradientBG>
-    </>
+    <div>
+      {setup}
+      {accountDoesNotExist}
+      {mainContent}
+    </div>
   );
 }
