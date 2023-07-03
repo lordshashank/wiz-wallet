@@ -98,10 +98,21 @@ Wiz-Wallet is a type of smart contract wallet that minimses the on-chain transac
 All the code for smart contract can be seen [here](https://github.com/lordshashank/wiz-wallet/blob/main/contracts/src/WizWallet.ts).
 So as of now there are basic functions for usage-
 
-1. Mint- To mint the tokens the custom tokens of specified value. The tokens are minted to the smart contract and the user is assigned its value using merkle maps.
-2. Transfer- To transfer the tokens from one user to another. The tokens are transferred from one user to another by updating merkle map off-chain
-3. Withdraw- To withdraw the tokens from the smart contract. The tokens are withdrawn from the smart contract by updating the merkle map off-chain and then the proof is generated and verified on-chain.
-4. Update- To update the merkle map of the user. The merkle map is updated off-chain and then the proof is generated and verified on-chain.
+### Mint
+
+- To mint the tokens the custom tokens of specified value. The tokens are minted to the smart contract and the user is assigned its value using merkle maps.
+
+### Transfer
+
+- To transfer the tokens from one user to another. The tokens are transferred from one user to another by updating merkle map off-chain
+
+### Withdraw
+
+- To withdraw the tokens from the smart contract. The tokens are withdrawn from the smart contract by updating the merkle map off-chain and then the proof is generated and verified on-chain.
+
+### Update
+
+- To update the merkle map of the user. The merkle map is updated off-chain and then the proof is generated and verified on-chain.
 
 These are the basic functionalities that we were able to implement during the hackathon. Being new to snarkyjs we had to work quite a lot to understand the concepts and implement them. We were able to implement the basic functionalities and we are looking forward to implement more functionalities in the future and implement off-chain and on-chain features for native tokens, storages, etc.
 
