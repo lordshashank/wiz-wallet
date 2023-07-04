@@ -1,0 +1,135 @@
+.header {
+  /* border-bottom: 1px solid #ccc; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  /* width: 1440px;
+    height: 56px; */
+  padding: 0 2rem;
+  opacity: 1;
+  background-color: rgb(98, 0, 238);
+  border-bottom: 0px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 5px;
+  color: white;
+}
+.header > button {
+  all: unset;
+  background: white;
+  padding: 0.5rem 1.25rem;
+  color: rgb(98, 0, 238);
+  font-weight: 700;
+  font-size: 1.3em;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+}
+.header > button:hover {
+  color: white;
+  background-color: rgb(98, 0, 238);
+}
+.sidebar {
+  flex: 0.2;
+  padding: 2rem 0 0rem 2rem;
+  min-height: 100vh;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgb(236, 239, 241);
+}
+.sidebar > h1 {
+  font-weight: 700;
+  font-size: 1.5em;
+}
+.active {
+  /* background-color: rgba(0, 0, 0, 0.05); */
+  /* border-radius: 10px; */
+  color: rgb(98, 0, 238);
+}
+.tokens > h3 {
+  margin: 0;
+  /* padding: 0.5rem 0 0.5rem 0.5rem; */
+  font-weight: 700;
+  font-size: 1.3em;
+}
+
+@media (width < 900px) {
+  .sidebar {
+    flex: 0.3;
+  }
+}
+@media (width < 700px) {
+  .sidebar {
+    flex: 0.4;
+  }
+}
+
+.token-details {
+  /* margin-left: 1rem; */
+  flex: 0.8;
+  margin: 2rem;
+  /* display: flex;
+  flex-direction: column;
+  gap: 2rem; */
+}
+.details > div {
+  margin-bottom: 1rem;
+  font-size: 1.3em;
+  font-weight: 600;
+  line-height: 1.5em;
+}
+.token-details button {
+  /* display: block; */
+  color: white;
+  background: rgb(98, 0, 238);
+  margin-bottom: 2rem;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.3em;
+  transition: all 0.1s ease-in;
+}
+.token-details button:hover {
+  background-color: rgba(98, 0, 238, 0.8);
+}
+.token-details button:disabled {
+  cursor: not-allowed;
+  background-color: rgba(98, 0, 238, 0.5);
+}
+/* .token-details button:disabled:hover {
+  background-color: rgba(98, 0, 238, 0.5);
+
+} */
+.token-details > h1 {
+  font-weight: 700;
+  font-size: 1.5em;
+}
+.btns {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: auto;
+  margin-top: 5rem;
+}
+.withdraw {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.withdraw > button {
+  margin-bottom: 0;
+}
+
+@media (width < 900px) {
+  .token-details {
+    flex: 0.7;
+  }
+}
+@media (width < 700px) {
+  .token-details {
+    flex: 0.6;
+  }
+}
