@@ -1,5 +1,17 @@
 import { fetchAccount, PublicKey, PrivateKey, Field } from "snarkyjs";
 
+import type {
+  ZkappWorkerRequest,
+  ZkappWorkerReponse,
+  WorkerFunctions,
+} from "./zkappWorker";
+import {
+  updateType,
+  withdrawType,
+  sendTokensType,
+  mintType,
+} from "../types/types";
+
 export default class ZkappWorkerClient {
   // ---------------------------------------------------------------------------------------
 
@@ -19,52 +31,45 @@ export default class ZkappWorkerClient {
     return this._call("compileContract", {});
   }
 
-  fetchAccount({ publicKey }) {
+  fetchAccount({
+    publicKey,
+  }: {
+    publicKey: PublicKey;
+  }): ReturnType<typeof fetchAccount> {
     const result = this._call("fetchAccount", {
       publicKey58: publicKey.toBase58(),
     });
-    return result;
+    return result as ReturnType<typeof fetchAccount>;
   }
 
-  initZkappInstance(publicKey) {
-    console.log("instance");
+  initZkappInstance(publicKey: PublicKey) {
     return this._call("initZkappInstance", {
       publicKey58: publicKey.toBase58(),
     });
   }
 
-  // async getNum() {
-  //   console.log("started");
-  //   const result = await this._call("getNum", {});
-  //   console.log("ended");
-  //   return Field.fromJSON(JSON.parse(result));
+  // async getNum(): Promise<Field> {
+  //   const result = await this._call('getNum', {});
+  //   return Field.fromJSON(JSON.parse(result as string));
   // }
 
-  mint(args) {
-    return this._call("mint", args);
+  createUpdateTransaction(args: updateType) {
+    return this._call("createUpdateTransaction", args);
+  }
+  createWithdrawTransaction(args: withdrawType) {
+    return this._call("createWithdrawTransaction", args);
+  }
+  createSendTokensTransaction(args: sendTokensType) {
+    return this._call("createSendTokensTransaction", args);
+  }
+  createMintTransaction(args: mintType) {
+    return this._call("createMintTransaction", args);
   }
 
-  proveMintTransaction() {
-    return this._call("proveMintTransaction", {});
-  }
-  withdraw(args) {
-    return this._call("withdraw", { args });
-  }
-  proveWithdrawTransaction() {
-    return this._call("proveWithdrawTransaction", {});
-  }
-  sendTokens(args) {
-    return this._call("sendTokens", { args });
-  }
-  proveSendTokensTransaction() {
-    return this._call("proveSendTokensTransaction", {});
-  }
-  createUpdateTransaction(args) {
-    return this._call("createUpdateTransaction", { args });
-  }
-  proveUpdateTransactiion() {
+  proveUpdateTransaction() {
     return this._call("proveUpdateTransaction", {});
   }
+
   async getTransactionJSON() {
     const result = await this._call("getTransactionJSON", {});
     return result;
@@ -72,28 +77,30 @@ export default class ZkappWorkerClient {
 
   // ---------------------------------------------------------------------------------------
 
-  worker;
+  worker: Worker;
 
-  promises;
+  promises: {
+    [id: number]: { resolve: (res: any) => void; reject: (err: any) => void };
+  };
 
-  nextId;
+  nextId: number;
 
   constructor() {
-    this.worker = new Worker(new URL("./zkappWorker.js", import.meta.url));
+    this.worker = new Worker(new URL("./zkappWorker.ts", import.meta.url));
     this.promises = {};
     this.nextId = 0;
 
-    this.worker.onmessage = (event) => {
+    this.worker.onmessage = (event: MessageEvent<ZkappWorkerReponse>) => {
       this.promises[event.data.id].resolve(event.data.data);
       delete this.promises[event.data.id];
     };
   }
 
-  _call(fn, args) {
+  _call(fn: WorkerFunctions, args: any) {
     return new Promise((resolve, reject) => {
       this.promises[this.nextId] = { resolve, reject };
 
-      const message = {
+      const message: ZkappWorkerRequest = {
         id: this.nextId,
         fn,
         args,
@@ -102,7 +109,6 @@ export default class ZkappWorkerClient {
       this.worker.postMessage(message);
 
       this.nextId++;
-      this.promises[this.nextId - 1].resolve();
     });
   }
 }
