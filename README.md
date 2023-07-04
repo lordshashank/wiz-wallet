@@ -93,7 +93,7 @@ Wiz-Wallet is a type of smart contract wallet that minimses the on-chain transac
 
 ## How it works
 
-<img src="images/product-screenshot.png" alt="Logo" width="800" height="400">
+<img src="images/product-screenshot.png" alt="HomePage" width="800" height="400">
 
 All the code for smart contract can be seen [here](https://github.com/lordshashank/wiz-wallet/blob/main/contracts/src/WizWallet.ts).
 So as of now there are basic functions for usage-
@@ -235,7 +235,7 @@ Project Link: [https://github.com/lordshashank/wiz-wallet](https://github.com/lo
 [license-url]: https://github.com/lordshashank/wiz-wallet/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: images/product-screenshot.png
 [next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [next-url]: https://nextjs.org/
 [react.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
