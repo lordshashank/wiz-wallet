@@ -93,7 +93,7 @@ Wiz-Wallet is a type of smart contract wallet that minimses the on-chain transac
 
 ## How it works
 
-<img src="images/product-screenshot.png" alt="Logo" width="800" height="500">
+<img src="images/product-screenshot.png" alt="Logo" width="800" height="400">
 
 All the code for smart contract can be seen [here](https://github.com/lordshashank/wiz-wallet/blob/main/contracts/src/WizWallet.ts).
 So as of now there are basic functions for usage-
