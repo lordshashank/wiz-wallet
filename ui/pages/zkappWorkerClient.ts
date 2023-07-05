@@ -65,6 +65,9 @@ export default class ZkappWorkerClient {
   createMintTransaction(args: mintType) {
     return this._call("createMintTransaction", args);
   }
+  // createUpdateOffChainTransaction() {
+  //   return this._call("createUpdateOffChainTransaction", {});
+  // }
 
   proveUpdateTransaction() {
     return this._call("proveUpdateTransaction", {});
@@ -73,6 +76,10 @@ export default class ZkappWorkerClient {
   async getTransactionJSON() {
     const result = await this._call("getTransactionJSON", {});
     return result;
+  }
+  async getTreeRoot() {
+    const treeRoot = await this._call("getTreeRoot", {});
+    return treeRoot;
   }
 
   // ---------------------------------------------------------------------------------------

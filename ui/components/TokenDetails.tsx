@@ -5,6 +5,7 @@ interface TokenDetailsProps {
   mint: () => void;
   withdraw: () => void;
   sendTokens: () => void;
+  updateOffChain: () => {};
   creatingTransaction: boolean;
   contractAddress: string;
 }
@@ -12,6 +13,7 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
   mint,
   withdraw,
   sendTokens,
+  updateOffChain,
   creatingTransaction,
   contractAddress,
 }) => {
@@ -27,7 +29,7 @@ const TokenDetails: React.FC<TokenDetailsProps> = ({
         </div>
       </div>
       <div className={styles.btns}>
-        <button onClick={mint} disabled={false}>
+        <button onClick={mint} disabled={creatingTransaction}>
           Mint
         </button>
         <button onClick={sendTokens} disabled={creatingTransaction}>

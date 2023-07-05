@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar";
 import TokensDetails from "../components/TokenDetails";
 import { useState, useEffect } from "react";
 import ZkappWorkerClient from "./zkappWorkerClient";
-import keys from "../../contracts/keys/wiz-wallet.json";
+import keys from "../../contracts/keys/wizwallet.json";
 
 import {
   PublicKey,
@@ -58,8 +58,9 @@ export default function Home() {
 
         console.log("checking if account exists...");
         const res = await zkappWorkerClient.fetchAccount({
-          publicKey: publicKey!,
+          publicKey: publicKey,
         });
+        console.log(res);
         const accountExists = res.error == null;
 
         await zkappWorkerClient.loadContract();
@@ -165,32 +166,39 @@ export default function Home() {
       amount: sendAmount,
     };
 
-    await state.zkappWorkerClient!.fetchAccount({
-      publicKey: state.publicKey!,
-    });
+    try {
+      await state.zkappWorkerClient!.fetchAccount({
+        publicKey: state.publicKey!,
+      });
 
-    await state.zkappWorkerClient!.createWithdrawTransaction(args);
+      await state.zkappWorkerClient!.createWithdrawTransaction(args);
 
-    console.log("creating proof...");
-    await state.zkappWorkerClient!.proveUpdateTransaction();
+      console.log("creating proof...");
+      await state.zkappWorkerClient!.proveUpdateTransaction();
 
-    console.log("getting Transaction JSON...");
-    const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
+      console.log("getting Transaction JSON...");
+      const transactionJSON =
+        await state.zkappWorkerClient!.getTransactionJSON();
 
-    console.log("requesting send transaction...");
-    const { hash } = await (window as any).mina.sendTransaction({
-      transaction: transactionJSON,
-      feePayer: {
-        fee: transactionFee,
-        memo: "",
-      },
-    });
+      console.log("requesting send transaction...");
+      const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
+        feePayer: {
+          fee: transactionFee,
+          memo: "",
+        },
+      });
 
-    console.log(
-      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
-    );
+      console.log(
+        "See transaction at https://berkeley.minaexplorer.com/transaction/" +
+          hash
+      );
 
-    setState({ ...state, creatingTransaction: false });
+      setState({ ...state, creatingTransaction: false });
+    } catch (error) {
+      console.log(error);
+      setState({ ...state, creatingTransaction: false });
+    }
   };
   // -------------------------------------------------------
   // Send Tokens
@@ -212,32 +220,39 @@ export default function Home() {
       valueBefore: valueBefore,
     };
 
-    await state.zkappWorkerClient!.fetchAccount({
-      publicKey: state.publicKey!,
-    });
+    try {
+      await state.zkappWorkerClient!.fetchAccount({
+        publicKey: state.publicKey!,
+      });
 
-    await state.zkappWorkerClient!.createSendTokensTransaction(args);
+      await state.zkappWorkerClient!.createSendTokensTransaction(args);
 
-    console.log("creating proof...");
-    await state.zkappWorkerClient!.proveUpdateTransaction();
+      console.log("creating proof...");
+      await state.zkappWorkerClient!.proveUpdateTransaction();
 
-    console.log("getting Transaction JSON...");
-    const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
+      console.log("getting Transaction JSON...");
+      const transactionJSON =
+        await state.zkappWorkerClient!.getTransactionJSON();
 
-    console.log("requesting send transaction...");
-    const { hash } = await (window as any).mina.sendTransaction({
-      transaction: transactionJSON,
-      feePayer: {
-        fee: transactionFee,
-        memo: "",
-      },
-    });
+      console.log("requesting send transaction...");
+      const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
+        feePayer: {
+          fee: transactionFee,
+          memo: "",
+        },
+      });
 
-    console.log(
-      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
-    );
+      console.log(
+        "See transaction at https://berkeley.minaexplorer.com/transaction/" +
+          hash
+      );
 
-    setState({ ...state, creatingTransaction: false });
+      setState({ ...state, creatingTransaction: false });
+    } catch (error) {
+      console.log(error);
+      setState({ ...state, creatingTransaction: false });
+    }
   };
   // -------------------------------------------------------
   // mint
@@ -245,7 +260,6 @@ export default function Home() {
   const mint = async () => {
     setState({ ...state, creatingTransaction: true });
     console.log("sending a transaction...");
-
     const mintAmount = UInt64.from(10);
     const zkAppPrivateKey = PrivateKey.fromBase58(keys.privateKey);
     const zkAppAddress = PublicKey.fromBase58(keys.publicKey);
@@ -262,34 +276,137 @@ export default function Home() {
       adminSignature: mintSignature,
     };
 
-    await state.zkappWorkerClient!.fetchAccount({
-      publicKey: state.publicKey!,
-    });
+    try {
+      await state.zkappWorkerClient!.fetchAccount({
+        publicKey: state.publicKey!,
+      });
 
-    await state.zkappWorkerClient!.createMintTransaction(args);
+      await state.zkappWorkerClient!.createMintTransaction(args);
 
-    console.log("creating proof...");
-    await state.zkappWorkerClient!.proveUpdateTransaction();
+      console.log("creating proof...");
+      await state.zkappWorkerClient!.proveUpdateTransaction();
 
-    console.log("getting Transaction JSON...");
-    const transactionJSON = await state.zkappWorkerClient!.getTransactionJSON();
+      console.log("getting Transaction JSON...");
+      const transactionJSON =
+        await state.zkappWorkerClient!.getTransactionJSON();
 
-    console.log("requesting send transaction...");
-    const { hash } = await (window as any).mina.sendTransaction({
-      transaction: transactionJSON,
-      feePayer: {
-        fee: transactionFee,
-        memo: "",
-      },
-    });
+      console.log("requesting send transaction...");
+      const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
+        feePayer: {
+          fee: transactionFee,
+          memo: "",
+        },
+      });
 
-    console.log(
-      "See transaction at https://berkeley.minaexplorer.com/transaction/" + hash
-    );
+      console.log(
+        "See transaction at https://berkeley.minaexplorer.com/transaction/" +
+          hash
+      );
 
-    setState({ ...state, creatingTransaction: false });
+      setState({ ...state, creatingTransaction: false });
+    } catch (error) {
+      console.log(error);
+      setState({ ...state, creatingTransaction: false });
+    }
   };
 
+  // -------------------------------------------------------
+  // update Off Chain
+
+  const updateOffChain = async () => {
+    setState({ ...state, creatingTransaction: true });
+    console.log("sending a transaction...");
+
+    // const height = 8;
+    // const transactionFee = 100_000_000;
+    // const NodeXMLHttpRequest =
+    //   XMLHttpRequestTs.XMLHttpRequest as any as typeof XMLHttpRequest;
+    // const storageServerAddress = "http://localhost:3001";
+
+    // const treeHeight = 8;
+
+    // const index = BigInt(Math.floor(Math.random() * 4));
+
+    // // get the existing tree
+    // const treeRoot = await state.zkappWorkerClient?.getTreeRoot();
+    // const idx2fields = await OffChainStorage.get(
+    //   storageServerAddress,
+    //   state.zkappPublicKey!,
+    //   treeHeight,
+    //   treeRoot,
+    //   NodeXMLHttpRequest
+    // );
+
+    // const tree = OffChainStorage.mapToTree(treeHeight, idx2fields);
+    // const leafWitness = new MerkleWitness8(tree.getWitness(BigInt(index)));
+
+    // // get the prior leaf
+    // const priorLeafIsEmpty = !idx2fields.has(index);
+    // let priorLeafNumber: Field;
+    // let newLeafNumber: Field;
+    // if (!priorLeafIsEmpty) {
+    //   priorLeafNumber = idx2fields.get(index)![0];
+    //   newLeafNumber = priorLeafNumber.add(3);
+    // } else {
+    //   priorLeafNumber = Field.zero;
+    //   newLeafNumber = Field.one;
+    // }
+
+    // // update the leaf, and save it in the storage server
+    // idx2fields.set(index, [newLeafNumber]);
+
+    // const [storedNewStorageNumber, storedNewStorageSignature] =
+    //   await OffChainStorage.requestStore(
+    //     storageServerAddress,
+    //     state.zkappPublicKey,
+    //     treeHeight,
+    //     idx2fields,
+    //     NodeXMLHttpRequest
+    //   );
+
+    // const args = {
+    //   leafIsEmpty: priorLeafIsEmpty,
+    //   oldNum: priorLeafNumber,
+    //   num: newLeafNumber,
+    //   path: storageServerAddress,
+    //   storedNewRootNumber: storedNewStorageNumber,
+    //   storedNewRootSignature: storedNewStorageSignature,
+    // };
+    try {
+      await state.zkappWorkerClient!.fetchAccount({
+        publicKey: state.publicKey!,
+      });
+
+      // await state.zkappWorkerClient!.createUpdateOffChainTransaction();
+
+      console.log("creating proof...");
+      await state.zkappWorkerClient!.proveUpdateTransaction();
+
+      console.log("getting Transaction JSON...");
+      const transactionJSON =
+        await state.zkappWorkerClient!.getTransactionJSON();
+
+      console.log("requesting send transaction...");
+      const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
+        feePayer: {
+          fee: transactionFee,
+          memo: "",
+        },
+      });
+
+      console.log(
+        "See transaction at https://berkeley.minaexplorer.com/transaction/" +
+          hash
+      );
+
+      setState({ ...state, creatingTransaction: false });
+    } catch (error) {
+      console.log(error);
+      setState({ ...state, creatingTransaction: false });
+    }
+  };
   let hasWallet;
   if (state.hasWallet != null && !state.hasWallet) {
     const auroLink = "https://www.aurowallet.com/";
@@ -341,6 +458,7 @@ export default function Home() {
             mint={mint}
             withdraw={withdraw}
             sendTokens={sendTokens}
+            updateOffChain={updateOffChain}
             creatingTransaction={state.creatingTransaction}
             contractAddress={
               "B62qin2Yj5Zt5yBc4EUGAdCq2MJL7NEPEsD7M6oRA1kwxn8VWhVPS8y"

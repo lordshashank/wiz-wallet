@@ -14,6 +14,7 @@ interface updateType {
   valueBefore: Field;
   valueAfter: Field;
 }
+interface updateOffchainType {}
 
 interface withdrawType {
   keyWitness: MerkleMapWitness;
