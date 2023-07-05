@@ -16,6 +16,14 @@
       "feepayerAlias": "wiz",
       "fee": "0.1",
       "smartContract": "BasicTokenContract"
+    },
+    "wizwallet": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/wizwallet.json",
+      "feepayerKeyPath": "/Users/Loser/.cache/zkapp-cli/keys/03-deploy.json",
+      "feepayerAlias": "03-deploy",
+      "fee": "0.1",
+      "smartContract": "WizWallet"
     }
   }
 }

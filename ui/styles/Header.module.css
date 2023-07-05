@@ -37,6 +37,8 @@
   border: 1px solid rgb(236, 239, 241);
 }
 .sidebar > h1 {
+  margin: 0;
+  margin-bottom: 1rem;
   font-weight: 700;
   font-size: 1.5em;
 }
@@ -67,6 +69,7 @@
   /* margin-left: 1rem; */
   flex: 0.8;
   margin: 2rem;
+  margin-top: 4.5rem;
   /* display: flex;
   flex-direction: column;
   gap: 2rem; */

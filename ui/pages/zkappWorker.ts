@@ -13,7 +13,7 @@ type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 
 // ---------------------------------------------------------------------------------------
 
-import type { BasicTokenContract } from "../../contracts/src/BasicTokenContract";
+import type { WizWallet } from "../../contracts/src/WizWallet";
 
 import type {
   updateType,
@@ -23,8 +23,8 @@ import type {
 } from "../types/types";
 
 const state = {
-  BasicTokenContract: null as null | typeof BasicTokenContract,
-  zkapp: null as null | BasicTokenContract,
+  WizWallet: null as null | typeof WizWallet,
+  zkapp: null as null | WizWallet,
   transaction: null as null | Transaction,
 };
 
@@ -41,21 +41,26 @@ const functions = {
     Mina.setActiveInstance(Berkeley);
   },
   loadContract: async (args: {}) => {
-    const { BasicTokenContract } = await import(
-      "../../contracts/build/src/BasicTokenContract.js"
+    const { WizWallet } = await import(
+      "../../contracts/build/src/WizWallet.js"
     );
-    state.BasicTokenContract = BasicTokenContract;
+    state.WizWallet = WizWallet;
   },
   compileContract: async (args: {}) => {
-    await state.BasicTokenContract!.compile();
+    await state.WizWallet!.compile();
   },
   fetchAccount: async (args: { publicKey58: string }) => {
     const publicKey = PublicKey.fromBase58(args.publicKey58);
     return await fetchAccount({ publicKey });
   },
   initZkappInstance: async (args: { publicKey58: string }) => {
-    const publicKey = PublicKey.fromBase58(args.publicKey58);
-    state.zkapp = new state.BasicTokenContract!(publicKey);
+    const publicKey = PublicKey.fromBase58(
+      "B62qmVyBabanveVqrRRgTCBmfr3x36TsQA6qFZQHCqcpLPrnByyggna"
+    );
+    state.zkapp = new state.WizWallet!(publicKey);
+  },
+  getTreeRoot: async (args: {}) => {
+    return state.zkapp?.storageTreeRoot.get();
   },
   // getNum: async (args: {}) => {
   //   const currentNum = await state.zkapp!.num.get();
@@ -103,6 +108,19 @@ const functions = {
     });
     state.transaction = transaction;
   },
+  // createUpdateOffChainTransaction: async (args: {}) => {
+  //   const transaction = await Mina.transaction(() => {
+  //     state.zkapp!.updateOffchain(
+  //       args!.leafIsEmpty,
+  //       args!.oldNum,
+  //       args!.num,
+  //       args!.path,
+  //       args!.storedNewRootNumber,
+  //       args!.storedNewRootSignature
+  //     );
+  //   });
+  //   state.transaction = transaction;
+  // },
   proveUpdateTransaction: async (args: {}) => {
     await state.transaction!.prove();
   },
